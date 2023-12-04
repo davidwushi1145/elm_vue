@@ -10,7 +10,7 @@ const router = createRouter({
       component: HomePage
     },
     {
-      path: '/business-info',
+      path: '/business-info/:businessId',
       name: 'BusinessInfo',
       component: () => import('../views/BusinessInfo.vue'),
       meta: { hideFooter: true } // 添加元信息，用于判断是否显示底部导航
@@ -51,7 +51,12 @@ const router = createRouter({
       name: 'Mine',
       component: () => import('../views/Mine.vue'),
     },
-  ]
+
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    // 总是滚动到顶部
+    return { top: 0 }
+  }
 })
 
 export default router

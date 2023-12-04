@@ -1,179 +1,290 @@
-<script setup lang="ts">
+<script lang="ts" setup>
+import {computed, onMounted, ref} from 'vue';
+import axios from 'axios';
+import {useRoute} from 'vue-router';
+import {getToken} from "@/authService";
 
+interface Business {
+  businessAddress: string;
+  businessExplain: string;
+  businessId: number;
+  businessImg: string;
+  businessName: string;
+  deliveryPrice: number;
+  orderTypeId: number;
+  remarks: string;
+  starPrice: number;
+}
+
+interface CartItem {
+  businessId: number;
+  cartId: number;
+  foodId: number;
+  quantity: number;
+  businessVo: any;
+  foodVo: any;
+}
+
+interface Food {
+  businessId: number;
+  foodExplain: string;
+  foodId: number;
+  foodImg: string;
+  foodName: string;
+  foodPrice: number;
+  remarks: string;
+}
+
+const totalQuantity = computed(() => {
+  return cartItems.value.reduce((total, item) => total + item.quantity, 0);
+});
+const totalCartPrice = computed(() => {
+  return cartItems.value.reduce((total, item) => total + item.quantity * item.foodVo.foodPrice, 0);
+});
+const route = useRoute();
+const businessId = route.params.businessId; // 正确获取路由参数
+const business = ref<Business | null>(null);
+const foods = ref<Food[]>([]);
+const cartItems = ref<CartItem[]>([]);
+
+const BUSINESS_API_URL = `/api/business/businesses/${businessId}`;
+const FOODS_API_URL = `/api/food/lists/${businessId}`;
+const CART_API_URL = `/api/cart/lists`;
+
+const fetchData = async () => {
+  try {
+    const businessResponse = await axios.get(BUSINESS_API_URL);
+    if (businessResponse && businessResponse.data && businessResponse.data.data) {
+      business.value = businessResponse.data.data;
+    }
+
+    const foodsResponse = await axios.get(FOODS_API_URL);
+    if (foodsResponse && foodsResponse.data && foodsResponse.data.data) {
+      foods.value = foodsResponse.data.data;
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+const fetchCart = async () => {
+  try {
+    const cartResponse = await axios.get(CART_API_URL, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'token': getToken()
+      },
+      params: {
+        businessId: businessId
+      }
+    });
+    if (cartResponse && cartResponse.data && cartResponse.data.data) {
+      const cartArr: CartItem[] = cartResponse.data.data;
+      // 将购物车数据与食品数据进行合并
+      // console.log('foods:', foods.value);
+      cartArr.forEach(cartItem => {
+        const food = foods.value.find(food => food.foodId === cartItem.foodId);
+        if (food) {
+          cartItem.foodVo = food;
+        } else {
+          console.warn(`No matching food found for cartItem with foodId: ${cartItem.foodId}`);
+        }
+      });
+      // 将购物车数据与商家数据进行合并
+      cartArr.forEach(cartItem => {
+        cartItem.businessVo = business.value;
+      });
+      cartItems.value = cartArr;
+      // console.log('cartArr:', cartArr);
+      console.log('cartItems:', cartItems);
+    }
+  } catch (error) {
+    console.error('Error fetching cart:', error);
+  }
+};
+// 添加购物车项
+const saveCart = async (foodId: number) => {
+  try {
+    const response = await axios.post('/api/cart/newCarts', null, {
+      headers: {
+        'Content-Type': 'application/json',
+        'token': getToken()
+      },
+      params: {
+        businessId: businessId,
+        foodId: foodId
+      }
+    });
+
+    if (response.data.code === 200) {
+      // 成功添加到购物车
+      // console.log('Cart item added successfully:', response.data);
+      const newCartItem = response.data.data; // 获取新购物车项
+      const food = foods.value.find(food => food.foodId === foodId); // 找到对应的食品项
+      if (food) {
+        newCartItem.foodVo = food; // 将食品项赋值给新购物车项的foodVo属性
+      }
+      return newCartItem;
+    } else {
+      // 处理错误情况
+      console.error('Error adding to cart:', response.data.message);
+    }
+  } catch (error) {
+    console.error('Error making request:', error);
+  }
+};
+// 更新购物车项
+const updateCart = async (foodId: number, quantity: number) => {
+  try {
+    const response = await axios.post('/api/cart/updated-carts', null, {
+      headers: {
+        'Content-Type': 'application/json',
+        'token': getToken()
+      },
+      params: {
+        businessId: businessId,
+        foodId: foodId,
+        quantity: quantity
+      }
+    });
+
+    if (response.data.code === 200) {
+      // 成功更新购物车
+      // console.log('Cart item updated successfully:', response.data);
+    } else {
+      // 处理错误情况
+      console.error('Error updating cart:', response.data.message);
+    }
+  } catch (error) {
+    console.error('Error making request:', error);
+  }
+};
+// 删除购物车项
+const removeCart = async (foodId: number) => {
+  try {
+    const response = await axios.delete('/api/cart/removed-carts', {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'token': getToken()
+      },
+      params: {
+        businessId: businessId,
+        foodId: foodId
+      }
+    });
+
+    if (response.data.code === 200) {
+      // 成功删除购物车项
+      // console.log('Cart item removed successfully:', response.data);
+    } else {
+      // 处理错误情况
+      console.error('Error removing from cart:', response.data.message);
+    }
+  } catch (error) {
+    console.error('Error making request:', error);
+  }
+};
+const increaseQuantity = async (foodId: number) => {
+  const cartItem = cartItems.value.find(item => item.foodId === foodId);
+  if (cartItem) {
+    cartItem.quantity += 1;
+    await updateCart(foodId, cartItem.quantity);
+  } else {
+    const newCartItem = await saveCart(foodId);
+    if (newCartItem) {
+      cartItems.value.push(newCartItem); // 更新购物车项数组
+    }
+  }
+};
+
+
+const decreaseQuantity = async (foodId: number) => {
+  const cartItem = cartItems.value.find(item => item.foodId === foodId);
+  if (cartItem) {
+    if (cartItem.quantity > 1) {
+      cartItem.quantity -= 1;
+      await updateCart(foodId, cartItem.quantity);
+    } else {
+      await removeCart(foodId);
+      cartItems.value = cartItems.value.filter(item => item.foodId !== foodId);
+    }
+  }
+};
+onMounted(async () => {
+  await fetchData();
+  await fetchCart();
+});
 </script>
 
 <template>
   <body class="">
   <div class="w-full h-full ">
     <!--herder部分-->
-    <header class="w-full h-24 bg-[#0097FFFF] text-white text-4xl fixed left-0 top-0 z-50 flex justify-center items-center">
+    <header
+        class="w-full h-24 bg-[#0097FFFF] text-white text-4xl fixed left-0 top-0 z-50 flex justify-center items-center">
       <p>商家信息</p>
     </header>
 
     <!--商家图片部分-->
-    <div class="w-full h-full mt-28 flex justify-center items-center text-base">
-      <img class="w-72 h-72 rounded" src="/src/assets/img/sj01.png">
+    <div v-if="business" class="w-full h-full mt-28 flex justify-center items-center text-base">
+      <img :src="business.businessImg || '/src/assets/img/default.png'" class="w-72 h-72 rounded">
     </div>
 
     <!--商家信息部分-->
-    <div class="w-full h-32 flex flex-col justify-center items-center text-2xl">
-      <h1 class="text-4xl font-semibold ">万家饺子（软件园E18店）</h1>
-      <p class="text-2xl font-medium text-gray-500 mt-px">&#165;15起送 &#165;3配送</p>
-      <p class="text-2xl font-medium text-gray-500 mt-px">各种饺子炒菜</p>
+    <div v-if="business" class="w-full h-32 flex flex-col justify-center items-center text-2xl">
+      <h1 class="text-4xl font-semibold ">{{ business.businessName }}</h1>
+      <p class="text-2xl font-medium text-gray-500 mt-px">&#165;{{ business.starPrice }}起送
+        &#165;{{ business.deliveryPrice }}配送</p>
+      <p class="text-2xl font-medium text-gray-500 mt-px">{{ business.businessExplain }}</p>
     </div>
 
-    <!--食品列表部分-->
+    <!-- 商家食品列表 -->
     <ul class="w-full mb-7 text-sm">
-      <li class="w=full box-border mx-3 my-8 p-1.25/1 select-none flex justify-between items-center">
+      <li v-for="food in foods" :key="food.foodId"
+          class="w=full box-border mx-3 my-8 p-1.25/1 select-none flex justify-between items-center">
         <div class="flex box-content items-center">
-          <img class="ml-3 w-1/3 h-1/3" src="/src/assets/img/sp01.png">
+          <img :src="food.foodImg" alt="食品图片" class="ml-3 w-1/3 h-1/3">
           <div class="ml-1.5">
-            <h3 class="text-3xl mx-3 font-semibold text-gray-600">纯肉鲜肉（水饺）</h3>
-            <p class="text-2xl leading-loose mx-3 font-normal text-gray-500 mt-1">新鲜猪肉</p>
-            <p class="text-2xl text-gray-500 mx-3 font-normal mt-1">&#165;15</p>
+            <h3 class="text-3xl mx-3 font-semibold text-gray-600">{{ food.foodName }}</h3>
+            <p class="text-2xl leading-loose mx-3 font-normal text-gray-500 mt-1">{{ food.foodExplain }}</p>
+            <p class="text-2xl text-gray-500 mx-3 font-normal mt-1">&#165;{{ food.foodPrice }}</p>
           </div>
         </div>
+        <!-- 添加和减少按钮逻辑 -->
         <div class="w-18 flex justify-between items-center">
+          <!-- 减少按钮 -->
           <div>
-            <i class="fa fa-minus-circle fa-2x mx-3 text-gray-500 cursor-pointer"></i>
+            <i class="fa fa-minus-circle fa-2x mx-3 text-gray-500 cursor-pointer"
+               @click="() => decreaseQuantity(food.foodId)"></i>
           </div>
-          <p class="text-3xl text-gray-600"><span>3</span></p>
+          <!-- 数量 -->
+          <p class="text-3xl text-gray-600"><span> {{
+              (cartItems.find(item => item.foodId === food.foodId) || {quantity: 0}).quantity
+            }}</span></p>
+          <!-- 增加按钮 -->
           <div>
-            <i class="fa fa-plus-circle fa-2x mx-3 text-blue-500 cursor-pointer"></i>
-          </div>
-        </div>
-      </li>
-
-      <li class="w=full box-border mx-3 my-8 p-1.25/1 select-none flex justify-between items-center">
-        <div class="flex items-center">
-          <img class="ml-3 w-1/3 h-1/3" src="/src/assets/img/sp02.png">
-          <div class="ml-1.5">
-            <h3 class="text-3xl mx-3 font-semibold text-gray-600">玉米鲜肉（水饺）</h3>
-            <p class="text-2xl leading-loose mx-3 font-normal text-gray-500 mt-1">玉米鲜肉</p>
-            <p class="text-2xl text-gray-500 mx-3 font-normal mt-1">&#165;16</p>
-          </div>
-        </div>
-        <div class="w-18 flex justify-between items-center">
-          <div>
-            <i class="fa fa-minus-circle fa-2x mx-3 text-gray-500 cursor-pointer"></i>
-          </div>
-          <p class="text-3xl text-gray-600"><span>2</span></p>
-          <div>
-            <i class="fa fa-plus-circle fa-2x mx-3 text-blue-500 cursor-pointer"></i>
-          </div>
-        </div>
-      </li>
-
-      <li class="w=full box-border mx-3 my-8 p-1.25/1 select-none flex justify-between items-center">
-        <div class="flex items-center">
-          <img class="ml-3 w-1/3 h-1/3" src="/src/assets/img/sp03.png">
-          <div class="ml-1.5">
-            <h3 class="text-3xl mx-3 font-semibold text-gray-600">虾仁三鲜（蒸饺）</h3>
-            <p class="text-2xl leading-loose mx-3 font-normal text-gray-500 mt-1">虾仁三鲜</p>
-            <p class="text-2xl text-gray-500 mx-3 font-normal mt-1">&#165;22</p>
-          </div>
-        </div>
-        <div class="w-18 flex justify-between items-center">
-          <div>
-            <i class="fa fa-minus-circle fa-2x mx-3 text-gray-500 cursor-pointer"></i>
-          </div>
-          <p class="text-3xl text-gray-600"><span>0</span></p>
-          <div>
-            <i class="fa fa-plus-circle fa-2x mx-3 text-blue-500 cursor-pointer"></i>
-          </div>
-        </div>
-      </li>
-
-      <li class="w=full box-border mx-3 my-8 p-1.25/1 select-none flex justify-between items-center">
-        <div class="flex items-center">
-          <img class="ml-3 w-1/3 h-1/3" src="/src/assets/img/sp04.png">
-          <div class="ml-1.5">
-            <h3 class="text-3xl mx-3 font-semibold text-gray-600">素三鲜（蒸饺）</h3>
-            <p class="text-2xl leading-loose mx-3 font-normal text-gray-500 mt-1">素三鲜</p>
-            <p class="text-2xl text-gray-500 mx-3 font-normal mt-1">&#165;15</p>
-          </div>
-        </div>
-        <div class="w-18 flex justify-between items-center">
-          <div>
-            <i class="fa fa-minus-circle fa-2x mx-3 text-gray-500 cursor-pointer"></i>
-          </div>
-          <p class="text-3xl text-gray-600"><span>0</span></p>
-          <div>
-            <i class="fa fa-plus-circle fa-2x mx-3 text-blue-500 cursor-pointer"></i>
-          </div>
-        </div>
-      </li>
-
-      <li class="w=full box-border mx-3 my-8 p-1.25/1 select-none flex justify-between items-center">
-        <div class="flex items-center">
-          <img class="ml-3 w-1/3 h-1/3" src="/src/assets/img/sp05.png">
-          <div class="ml-1.5">
-            <h3 class="text-3xl mx-3 font-semibold text-gray-600">角瓜鸡蛋（蒸饺）</h3>
-            <p class="text-2xl leading-loose mx-3 font-normal text-gray-500 mt-1">角瓜鸡蛋</p>
-            <p class="text-2xl text-gray-500 mx-3 font-normal mt-1">&&#165;16</p>
-          </div>
-        </div>
-        <div class="w-18 flex justify-between items-center">
-          <div>
-            <i class="fa fa-minus-circle fa-2x mx-3 text-gray-500 cursor-pointer"></i>
-          </div>
-          <p class="text-3xl text-gray-600"><span>0</span></p>
-          <div>
-            <i class="fa fa-plus-circle fa-2x mx-3 text-blue-500 cursor-pointer"></i>
-          </div>
-        </div>
-      </li>
-
-      <li class="w=full box-border mx-3 my-8 p-1.25/1 select-none flex justify-between items-center">
-        <div class="flex items-center">
-          <img class="ml-3 w-1/3 h-1/3" src="/src/assets/img/sp06.png">
-          <div class="ml-1.5">
-            <h3 class="text-3xl mx-3 font-semibold text-gray-600">小白菜肉（水饺）</h3>
-            <p class="text-2xl leading-loose mx-3 font-normal text-gray-500 mt-1">小白菜肉</p>
-            <p class="text-2xl text-gray-500 mx-3 font-normal mt-1">&#165;18</p>
-          </div>
-        </div>
-        <div class="w-18 flex justify-between items-center">
-          <div>
-            <i class="fa fa-minus-circle fa-2x mx-3 text-gray-500 cursor-pointer"></i>
-          </div>
-          <p class="text-3xl text-gray-600"><span>0</span></p>
-          <div>
-            <i class="fa fa-plus-circle fa-2x mx-3 text-blue-500 cursor-pointer"></i>
-          </div>
-        </div>
-      </li>
-
-      <li class="w=full box-border mx-3 mt-8 mb-32 p-1.25/1 select-none flex justify-between items-center">
-        <div class="flex items-center">
-          <img class="ml-3 w-1/3 h-1/3" src="/src/assets/img/sp07.png">
-          <div class="ml-1.5">
-            <h3 class="text-3xl mx-3 font-semibold text-gray-600">芹菜牛肉（水饺）</h3>
-            <p class="text-2xl leading-loose mx-3 font-normal text-gray-500 mt-1">芹菜牛肉</p>
-            <p class="text-2xl text-gray-500 mx-3 font-normal mt-1">&#165;18</p>
-          </div>
-        </div>
-        <div class="w-18 flex justify-between items-center">
-          <div>
-            <i class="fa fa-minus-circle fa-2x mx-3 text-gray-500 cursor-pointer"></i>
-          </div>
-          <p class="text-3xl text-gray-600"><span>0</span></p>
-          <div>
-            <i class="fa fa-plus-circle fa-2x mx-3 text-blue-500 cursor-pointer"></i>
+            <i class="fa fa-plus-circle fa-2x mx-3 text-blue-500 cursor-pointer"
+               @click="() => increaseQuantity(food.foodId)"></i>
           </div>
         </div>
       </li>
     </ul>
-
+    <div>&nbsp;</div>
+    <div>&nbsp;</div>
+    <div>&nbsp;</div>
+    <div>&nbsp;</div>
     <!--购物车部-->
     <div class="w-full h-28 fixed left-0 bottom-0 flex text-base">
       <div class=" bg-gray-700 basis-2/3 flex">
-        <div class="w-32 h-32 box-border border-solid border-8 border-gray-700 rounded-full bg-blue-500 text-white flex justify-center items-center -mt-2 -ml-1 relative">
+        <div
+            class="w-32 h-32 box-border border-solid border-8 border-gray-700 rounded-full bg-blue-500 text-white flex justify-center items-center -mt-2 -ml-1 relative">
           <i class="fa fa-shopping-cart fa-3x"></i>
-          <div class="w-10 h-10 rounded-full bg-red-600 text-white text-2xl flex justify-center items-center absolute -right-1/4 -top-1/4">3</div>
+          <div
+              class="w-10 h-10 rounded-full bg-red-600 text-white text-2xl flex justify-center items-center absolute -right-1/4 -top-1/4">
+            {{ totalQuantity }}
+          </div>
         </div>
         <div>
-          <p class="text-4xl text-white mt-4">&#165;12.88</p>
+          <p class="text-4xl text-white mt-4">&#165;{{ totalCartPrice }}</p>
           <p class="text-xl text-gray-500">另需配送费3元</p>
         </div>
       </div>
@@ -181,9 +292,10 @@
 
       <div class="basis-1/3">
         <RouterLink class="block w-full h-full" to="/order">
-        <button class="w-full h-full bg-green-500 text-white text-4xl font-bold select-none cursor-pointer flex justify-center items-center">
-          去结算
-        </button>
+          <button
+              class="w-full h-full bg-green-500 text-white text-4xl font-bold select-none cursor-pointer flex justify-center items-center">
+            去结算
+          </button>
         </RouterLink>
       </div>
     </div>
