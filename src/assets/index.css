@@ -1,0 +1,289 @@
+/* ./src/assets/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/*总容器样式 */
+.wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+/*头部样式*/
+.wrapper header {
+    background-color: #0097FF;
+    display: flex;
+    width: 100%;
+    height: 12vw;
+    align-items: center;
+}
+
+.wrapper header .icon-location-box {
+    width: 3.5vw;
+    height: 4vw;
+    margin: 0 1vw 0 3vw;
+
+}
+
+.wrapper header .location-text {
+    font-size: 4.5vw;
+    font-weight: 800;
+    color: #fff;
+    margin-left: 1vw;
+}
+
+/*搜索框样式*/
+.wrapper .search {
+    width: 100%;
+    height: 12vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /*position: fixed;*/
+    top: 12vw;
+    left: 0;
+}
+
+.wrapper .search .search-fixed-top {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    height: 9vw;
+    width: 100%;
+    background: #ffffff;
+}
+
+.wrapper .search .search-fixed-top .search-panel {
+    width: 95%;
+    height: 8vw;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    border: 2px solid #17BAF9;
+    border-radius: 25px;
+    font-size: 5vw;
+    color: #9f9f9f;
+}
+
+.wrapper .search .search-fixed-top .search-button {
+    font-size: 4vw;
+    border-radius: 25px;
+    background-color: #17BAF9;
+    color: white;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrapper .search .search-fixed-top i {
+    font-size: 5vw;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    display: flex;
+}
+
+/*点餐分类样式*/
+.wrapper .food-type {
+    width: 100%;
+    height: 48vw;
+    /*background-color: #0097FF;*/
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    /*position: fixed;*/
+    top: 21vw;
+    left: 0;
+}
+
+.wrapper .food-type .food-type-item {
+    width: 18vw;
+    height: 20vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /*align-content: center;*/
+    cursor: pointer;
+}
+
+.wrapper .food-type .food-type-item img {
+    width: 12vw;
+    height: 10.3vw;
+    border-radius: 50%;
+}
+
+.wrapper .food-type .food-type-item p {
+    font-size: 3.2vw;
+    color: #666;
+    margin-top: 1vw;
+}
+
+/*横幅广告样式*/
+.wrapper .banner {
+    width: 95vw;
+    height: 28vw;
+    /*border: red solid 1px;*/
+    background-image: url("../assets/img/index_banner.png");
+    margin-left: 2.5vw;
+    box-sizing: border-box;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 2vw 6vw;
+}
+
+/*超级会员样式*/
+.wrapper .supperMember {
+    width: 95vw;
+    height: 11.5vw;
+    margin-left: 2.5vw;
+    box-sizing: border-box;
+    background-color: #FEEDC1;
+    margin-top: 1.3vw;
+    border-radius: 2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wrapper .supperMember .left {
+    display: flex;
+    align-items: center;
+    margin-left: 4vw;
+}
+
+/*推荐商家样式表*/
+.wrapper .recommend {
+    width: 100%;
+    height: 14vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrapper .recommend p {
+    font-size: 4vw;
+    margin-left: 4vw;
+    margin-right: 4vw;
+}
+
+.wrapper .recommend .recommend-line {
+    height: 0.2vw;
+    width: 6vw;
+    background-color: rgb(128, 128, 128);
+}
+
+/*推荐方式样式*/
+.wrapper .recommendType {
+    width: 100%;
+    height: 5vw;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 3.5vw;
+    color: #555555;
+    margin-bottom: 5vw;
+}
+
+/*商家样式*/
+.wrapper .business-list .business {
+    width: 100%;
+    margin-bottom: 1vw;
+    display: flex;
+    box-sizing: border-box;
+    border-bottom: #555555 1px solid;
+    padding: 2.5vw;
+}
+.wrapper .business-list .business img{
+    width: 20vw;
+    height: 20vw;
+}
+.wrapper .business-list .business .business-info{
+    color: #666666;
+    font-size: 3.1vw;
+    width: 100%;
+    padding-left: 2.5vw;
+    /*display: flex;*/
+    line-height: 0;
+}
+.wrapper .business-list .business .business-info .business-name{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.wrapper .business-list .business .business-info .business-name h3{
+    font-size: 4vw;
+    color: #333;
+}
+.wrapper .business-list .business .business-info .business-info-start{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2vw;
+}
+.wrapper .business-list .business .business-info .business-info-start .business-info-left{
+    display: flex;
+    align-items: center;
+    font-size: 3.1vw;
+}
+.wrapper .business-list .business .business-info .business-info-start .business-info-left .fa-star{
+    color: #FFC107;
+    margin-right: 0.5vw;
+}
+.wrapper .business-list .business .business-info .business-info-start .business-info-right {
+    color: white;
+    background-color: cornflowerblue;
+    font-size: 2.4vw;
+    border-radius: 2px;
+    padding: 0.6vw;
+}
+.wrapper .business-list .business .business-info .business-delivery{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 3vw;
+}
+.wrapper .business-list .business .business-info .business-info-detail{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2vw;
+}
+.wrapper .business-list .business .business-info .business-info-detail div{
+    line-height: 1;
+    border: 1px solid #DDDDDD;
+    padding: 0.15vw;
+    border-radius: 2px;
+}
+.wrapper .business-list .business .business-info .business-info-promotion{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2vw;
+}
+.wrapper .business-list .business .business-info .business-info-promotion .business-info-promotion-left{
+    display: flex;
+    align-items: center;
+}
+.wrapper .business-list .business .business-info .business-info-promotion .business-info-promotion-left .business-info-promotion-left-icon{
+    color: white;
+    line-height: normal;
+    width: 4vw;
+    height: 4vw;
+    border-radius: 3px;
+    background-color: #70BC47;
+}
+.wrapper .business-list .business .business-info .business-info-promotion .business-info-promotion-right{
+    display: flex;
+    align-items: center;
+}
+/*推荐商家列表*/
+.wrapper .business-list {
+    width: 100%;
+    /*height: 100vw;*/
+    /*box-sizing: border-box;*/
+    margin-bottom: 11vw;
+}
+
+

@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/*npx tailwindcss -i ./src/css/global.css -o ./dist/output.css --watch*/
+html,body{
+    width: 100%;
+    height: 100%;
+    font-family: 'Roboto', sans-serif;
+}
+a{
+    text-decoration: none;
+    color: #000;
+}
+ol, ul {
+    list-style: none;
+    padding: 0;
+}
+.icon-location {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50% 50% 50% 0;
+    background: #fff;
+    transform: rotate(-45deg);
+}
+.icon-location:after {
+    content: '';
+    width: 40%;
+    height: 40%;
+    margin: 30% 0 0 29%;
+    background-color: #0097FF;
+    position: absolute;
+    border-radius: 50%;
+}
+.h3Title{
+    font-size: 4.2vw;
+}
+.bannerText{
+    font-size: 3.4vw;
+    color: #666;
+}
+.linkText{
+    font-size: 3vw;
+    color: #c79868;
+    font-weight: 700;
+}
+/*底部样式*/
+.wrapper .footer {
+    width: 100%;
+    height: 14vw;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    border-top: 1px solid #ccc;
+    bottom: 0;
+    left: 0;
+    background: #ffffff;
+}
+
+.wrapper .footer div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    margin-top: 5vw;
+    color: #858585;
+    cursor: pointer;
+}
+
+.wrapper .footer div p {
+    font-size: 2.8vw;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
+
+.wrapper .footer div i {
+    width: 5vw;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
