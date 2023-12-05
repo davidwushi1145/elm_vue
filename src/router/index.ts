@@ -51,6 +51,11 @@ const router = createRouter({
       name: 'Mine',
       component: () => import('../views/Mine.vue'),
     },
+    {
+      path: '/address',
+      name: 'Address',
+      component: () => import('../views/UserAddress.vue'),
+    },
 
   ],
   scrollBehavior (to, from, savedPosition) {

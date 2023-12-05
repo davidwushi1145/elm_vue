@@ -9,6 +9,11 @@ declare module 'vue' {
   export interface GlobalComponents {
     BusinessInfo: typeof import('./src/components/BusinessInfo.vue')['default']
     BusinessList: typeof import('./src/components/BusinessList.vue')['default']
+    ElButton: typeof import('element-plus/es')['ElButton']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
+    ElForm: typeof import('element-plus/es')['ElForm']
+    ElFormItem: typeof import('element-plus/es')['ElFormItem']
+    ElInput: typeof import('element-plus/es')['ElInput']
     HomePage: typeof import('./src/components/HomePage.vue')['default']
     Login: typeof import('./src/components/Login.vue')['default']
     Navi: typeof import('./src/components/Navi.vue')['default']
