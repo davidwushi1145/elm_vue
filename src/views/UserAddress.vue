@@ -3,7 +3,7 @@ import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import {getToken} from "@/authService";
 import {ElMessage} from "element-plus";
-
+import {Upload } from '@element-plus/icons-vue'
 
 interface DeliveryAddress {
   contactName: string;
@@ -204,29 +204,27 @@ onMounted(fetchAddresses);
     </el-dialog>
 
     <!-- 地址列表部分 -->
-
-
-
     <div class="w-full flex-col h-30 flex box-border pt-[4vw] px-[3vw] pb-0 justify-center items-center">
-    <ul class="mt-24 w-full bg-white">
-      <li v-for="item in deliveryAddressArr" class="border-b border-gray-300 flex p-3 mx-3">
-        <div class="flex-1 cursor-pointer" @click="setDeliveryAddress(item)">
-          <h3 class="text-gray-600 font-light text-xl">{{ item.contactName }}{{ sexFilter(item.contactSex) }}
-            {{ item.contactTel }}</h3>
-          <p class="text-gray-600 text-lg">{{ item.address }}</p>
-        </div>
-        <div class="flex-none text-gray-400 text-2xl flex justify-around items-center">
-          <i class="fa fa-edit cursor-pointer" @click="openF"></i>
-          <i class="fa fa-remove cursor-pointer" @click="removeUserAddress(item.daId)"></i>
-        </div>
-      </li>
-    </ul>
+      <el-descriptions  border class="w-full mt-24" v-for="item in deliveryAddressArr" :column="2">
+        <template #extra>
+          <el-button type="primary" @click="openF">编辑地址</el-button>
+          <el-button type="danger" @click="removeUserAddress(item.daId)">删除地址</el-button>
+        </template>
+        <el-descriptions-item label="姓名">{{item.contactName}}</el-descriptions-item>
+        <el-descriptions-item label="联系电话">{{item.contactTel}}</el-descriptions-item>
+        <el-descriptions-item label="性别">
+          <el-tag size="small">{{sexFilter(item.contactSex)}}</el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="地址"
+        >{{item.address}}</el-descriptions-item
+        >
+      </el-descriptions>
   </div>
     <!-- 新增地址部分 -->
-    <div @click="openF"
-        class="addbtn bg-white border-t border-b border-gray-300 mt-1 h-14 flex justify-center items-center text-blue-500 text-lg cursor-pointer">
-      <i class="fa fa-plus-circle"></i>
-      <p class="ml-2">新增收货地址</p>
+    <div class="flex mt-24 justify-center">
+      <el-button type="primary" @click="openF">
+        添加新地址<el-icon class="el-icon--right"><Upload /></el-icon>
+      </el-button>
     </div>
 
   </div>
