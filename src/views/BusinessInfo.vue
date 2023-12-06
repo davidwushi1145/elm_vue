@@ -3,6 +3,7 @@ import {computed, onMounted, ref} from 'vue';
 import axios from 'axios';
 import {useRoute} from 'vue-router';
 import {getToken} from "@/authService";
+import router from "@/router";
 
 interface Business {
   businessAddress: string;
@@ -183,6 +184,38 @@ const removeCart = async (foodId: number) => {
     console.error('Error making request:', error);
   }
 };
+const createOrder = async (businessId: number, daId: number, orderTotal: number) => {
+  try {
+    const response = await axios.post('/api/orders/newOrders', null, {
+      params: {
+        businessId,
+        daId,
+        orderTotal
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        'token': getToken(),
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error creating orders:', error);
+    throw error;
+  }
+};
+const handleCreateOrder = async (businessId:number, daId:number, orderTotal:number) => {
+  try {
+    console.log(businessId,daId,orderTotal);
+    const result = await createOrder(businessId, daId, orderTotal);
+    console.log('Order created successfully:', result);
+    // 在成功创建订单后跳转到订单页面
+    router.push({ name: 'Order', params: { orderId: result.data} });
+  } catch (error) {
+    console.error('Failed to create order:', error);
+    // 可以添加错误处理逻辑
+  }
+};
 const increaseQuantity = async (foodId: number) => {
   const cartItem = cartItems.value.find(item => item.foodId === foodId);
   if (cartItem) {
@@ -291,12 +324,10 @@ onMounted(async () => {
 
 
       <div class="basis-1/3">
-        <RouterLink class="block w-full h-full" to="/order">
-          <button
+          <button @click="handleCreateOrder(Number(businessId), 1, totalCartPrice)"
               class="w-full h-full bg-green-500 text-white text-4xl font-bold select-none cursor-pointer flex justify-center items-center">
             去结算
           </button>
-        </RouterLink>
       </div>
     </div>
   </div>

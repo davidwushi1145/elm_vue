@@ -22,7 +22,7 @@ const handleLogin = async () => {
     if (token) {
       saveToken(token); // 保存 JWT
     }
-    console.log('登录成功:', response.data.data.JWT);
+    // console.log('登录成功:', response.data.data.JWT);
     alert('登录成功');
     await router.push('/mine'); // 跳转到首页
   } catch (error) {

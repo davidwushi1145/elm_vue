@@ -20,6 +20,7 @@ declare module 'vue' {
     ElInput: typeof import('element-plus/es')['ElInput']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElTag: typeof import('element-plus/es')['ElTag']
+    ElTree: typeof import('element-plus/es')['ElTree']
     HomePage: typeof import('./src/components/HomePage.vue')['default']
     Login: typeof import('./src/components/Login.vue')['default']
     Navi: typeof import('./src/components/Navi.vue')['default']

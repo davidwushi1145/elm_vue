@@ -21,7 +21,7 @@ const router = createRouter({
         component: () => import('../views/BusinessList.vue')
     },
     {
-      path: '/order',
+      path: '/order/:orderId',
       name: 'Order',
       component: () => import('../views/Order.vue'),
       meta: { hideFooter: true } // 添加元信息，用于判断是否显示底部导航
@@ -32,7 +32,7 @@ const router = createRouter({
       component: () => import('../views/OrderList.vue'),
     },
     {
-      path: '/payment',
+      path: '/payment/:orderId',
       name: 'Payment',
       component: () => import('../views/Payment.vue'),
     },

@@ -36,6 +36,7 @@ const fetchUserInfo = async () => {
     }
   } catch (error) {
     console.error('请求异常:', error);
+    clearToken();
   }
 };
 
