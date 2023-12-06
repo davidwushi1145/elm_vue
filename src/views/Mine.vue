@@ -61,7 +61,12 @@ onMounted(fetchUserInfo);
       <p>加载用户信息中...</p>
     </div>
     <div class="w-full flex-col h-30 flex box-border pt-[4vw] px-[3vw] pb-0 justify-center items-center">
-      <button class="w-full h-20 text-3xl font-bold text-[#666666FF] bg-[#DDDDDDFF] rounded-[4px]" @click=exit()>退出</button>
+      <router-link to="/address" class="w-full">
+      <el-button type="info" class="w-full h-20 text-3xl font-bold text-[#666666FF] bg-[#DDDDDDFF] rounded-[4px]">我的地址</el-button>
+      </router-link>
+    </div>
+    <div class="w-full flex-col h-30 flex box-border pt-[4vw] px-[3vw] pb-0 justify-center items-center">
+      <el-button type="danger" class="w-full h-20 text-3xl font-bold text-[#666666FF] bg-[#FF0000] rounded-[4px]" @click=exit()>退出</el-button>
     </div>
 
 

@@ -31,23 +31,42 @@ const listDeliveryAddressByUserId = async () => {
     console.error('Error making request:', error);
   }
 };
-const removeDeliveryAddress = async (deliveryAddress: DeliveryAddress) => {
+const newDeliveryAddress = async (deliveryAddress: DeliveryAddress) => {
   try {
-    const response = await axios.delete('/api/deliveryAddress', {
+    const response = await axios.post('/api/deliveryAddress/newDA', null, {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
         'token': getToken()
       },
-      data: deliveryAddress
+      params: {
+        address: deliveryAddress.address,
+        contactName: deliveryAddress.contactName,
+        contactSex: deliveryAddress.contactSex,
+        contactTel: deliveryAddress.contactTel
+      }
     });
 
     if (response.data.code === 200) {
-      return response.data.data; // This will be the number of deleted addresses
+      return response.data.data; // This will be the new DeliveryAddressVo object
     } else {
-      console.error('Error removing delivery address:', response.data.message);
+      console.error('Error creating delivery address:', response.data.message);
     }
   } catch (error) {
     console.error('Error making request:', error);
+  }
+};
+
+const removeDeliveryAddress = async (daId:number) => {
+  try {
+    const response = await axios.delete(`/api/deliveryAddress/removed-DA`, {
+      params: {
+        daId: daId
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error making request:', error);
+    throw error;
   }
 };
 const updateDeliveryAddress = async (deliveryAddress: DeliveryAddress) => {
@@ -101,6 +120,7 @@ const addressForm = ref({
   address: '',
   contactName: '',
   contactTel: '',
+  contactSex: ''
 });
 const submitAddressForm = async () => {
   // 创建一个 DeliveryAddress 对象
@@ -114,14 +134,14 @@ const submitAddressForm = async () => {
 
   // 调用 editUserAddress 方法
   if (newAddress.daId === 0) {
-    alert('请选择要修改的地址！');
+    await newDeliveryAddress(newAddress);
   } else {
     await editUserAddress(newAddress);
   }
 
   ElMessage({
     type: 'success',
-    message: '修改成功！'
+    message: '成功！'
   });
 
   await fetchAddresses();
@@ -146,8 +166,7 @@ const editUserAddress = async (address: DeliveryAddress) => {
 };
 
 const removeUserAddress = async (daId: number) => {
-  const address = await getDeliveryAddressById(daId);
-  await removeDeliveryAddress(address);
+  await removeDeliveryAddress(daId);
   deliveryAddressArr.value = deliveryAddressArr.value.filter(item => item.daId !== daId);
 };
 
@@ -171,6 +190,9 @@ onMounted(fetchAddresses);
         <el-form-item label="联系人">
           <el-input v-model="addressForm.contactName"></el-input>
         </el-form-item>
+        <el-form-item label="性别">
+          <el-input v-model="addressForm.contactSex"></el-input>
+        </el-form-item>
         <el-form-item label="联系电话">
           <el-input v-model="addressForm.contactTel"></el-input>
         </el-form-item>
@@ -182,6 +204,10 @@ onMounted(fetchAddresses);
     </el-dialog>
 
     <!-- 地址列表部分 -->
+
+
+
+    <div class="w-full flex-col h-30 flex box-border pt-[4vw] px-[3vw] pb-0 justify-center items-center">
     <ul class="mt-24 w-full bg-white">
       <li v-for="item in deliveryAddressArr" class="border-b border-gray-300 flex p-3 mx-3">
         <div class="flex-1 cursor-pointer" @click="setDeliveryAddress(item)">
@@ -195,9 +221,9 @@ onMounted(fetchAddresses);
         </div>
       </li>
     </ul>
-
+  </div>
     <!-- 新增地址部分 -->
-    <div
+    <div @click="openF"
         class="addbtn bg-white border-t border-b border-gray-300 mt-1 h-14 flex justify-center items-center text-blue-500 text-lg cursor-pointer">
       <i class="fa fa-plus-circle"></i>
       <p class="ml-2">新增收货地址</p>
