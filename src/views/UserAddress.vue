@@ -155,10 +155,6 @@ const selectedAddress = ref<DeliveryAddress | null>(null);
 const fetchAddresses = async () => {
   deliveryAddressArr.value = await listDeliveryAddressByUserId();
 };
-const setDeliveryAddress = (address: DeliveryAddress) => {
-  selectedAddress.value = address;
-  console.log(selectedAddress.value);
-};
 
 const editUserAddress = async (address: DeliveryAddress) => {
   console.log(address);
@@ -204,8 +200,8 @@ onMounted(fetchAddresses);
     </el-dialog>
 
     <!-- 地址列表部分 -->
-    <div class="w-full flex-col h-30 flex box-border pt-[4vw] px-[3vw] pb-0 justify-center items-center">
-      <el-descriptions  border class="w-full mt-24" v-for="item in deliveryAddressArr" :column="2">
+    <div class="w-full flex-col h-30 flex box-border pt-[4vw] px-[3vw] pb-0 justify-center items-center" v-for="item in deliveryAddressArr">
+      <el-descriptions  border class="w-full mt-24" :column="2">
         <template #extra>
           <el-button type="primary" @click="openF">编辑地址</el-button>
           <el-button type="danger" @click="removeUserAddress(item.daId)">删除地址</el-button>

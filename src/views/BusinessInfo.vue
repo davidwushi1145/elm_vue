@@ -324,7 +324,7 @@ onMounted(async () => {
 
 
       <div class="basis-1/3">
-          <button @click="handleCreateOrder(Number(businessId), 1, totalCartPrice)"
+          <button @click="totalCartPrice > 0 && handleCreateOrder(Number(businessId), 1, totalCartPrice)"
               class="w-full h-full bg-green-500 text-white text-4xl font-bold select-none cursor-pointer flex justify-center items-center">
             去结算
           </button>

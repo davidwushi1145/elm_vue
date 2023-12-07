@@ -198,7 +198,7 @@ onMounted(fetchAndFillOrdersData);
             </svg>
           </p>
           <div class="flex">
-            <p class="">&#165;{{order.orderTotal}}</p>
+            <p class="">&#165;{{order.orderTotal + (order.businessVo?.deliveryPrice || 0)}}</p>
             <RouterLink class="block w-full h-full" to="/">
               <button class="bg-green-500 text-white rounded-[3px] ml-4 select-none cursor-pointer">去评价
               </button>

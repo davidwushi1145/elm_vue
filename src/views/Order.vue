@@ -2,11 +2,12 @@
 import {useRoute, } from "vue-router";
 import {getToken} from "@/authService";
 import axios from 'axios';
-import {onMounted, ref} from "vue";
-import router from "@/router";
+import {onMounted, ref, computed} from "vue";
+import { ElMessageBox } from 'element-plus'
 
 const route = useRoute();
 const orderId = route.params.orderId; // 正确获取路由参数
+
 
 interface BusinessVo {
   businessAddress: string;
@@ -51,6 +52,48 @@ interface OrdersVo {
   userId: string;
   show: boolean;
 }
+
+interface DeliveryAddress {
+  contactName: string;
+  contactSex: number;
+  contactTel: string;
+  address: string;
+  daId: number;
+}
+
+const deliveryAddressArr = ref<DeliveryAddress[]>([]);
+const dialogVisible = ref(false);
+const selectedAddress = ref<DeliveryAddress | null>(null);
+
+const handleEdit = (index: number, row: DeliveryAddress) => {
+  selectedAddress.value = row;
+  dialogVisible.value = false;
+};
+
+const formatSex = (row: DeliveryAddress) => {
+  return row.contactSex === 0 ? '女士' : '先生';
+};
+
+const tableData = computed(() => deliveryAddressArr.value);
+
+const listDeliveryAddressByUserId = async () => {
+  try {
+    const response = await axios.get('/api/deliveryAddress/lists', {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'token': getToken()
+      }
+    });
+
+    if (response.data.code === 200) {
+      return response.data.data; // This will be an array of DeliveryAddressVo objects
+    } else {
+      console.error('Error fetching delivery addresses:', response.data.message);
+    }
+  } catch (error) {
+    console.error('Error making request:', error);
+  }
+};
 
 const getOrdersById = async (orderId: number)=> {
   try {
@@ -102,7 +145,7 @@ const orders = ref<OrdersVo[]>([]);
 const fetchAndFillOrdersData = async () => {
   try {
     const ordersResponse = await getOrdersById(Number(orderId));
-    console.log('ordersResponse:', ordersResponse);
+    // console.log('ordersResponse:', ordersResponse);
     if (ordersResponse.code === 200 ) {
       // 填充 businessVo 和订单详细信息
       let order = ordersResponse.data;
@@ -129,43 +172,26 @@ const fetchAndFillOrdersData = async () => {
     console.error('Error fetching and filling orders data:', error);
   }
 };
+const fetchAddresses = async () => {
+  deliveryAddressArr.value = await listDeliveryAddressByUserId();
+  console.log('deliveryAddressArr:', deliveryAddressArr.value);
+};
 
-const updateOrder = async (orderId: number, orderState: number)=> {
-  try {
-    const response = await axios.post('/api/orders/newStates', null, {
-      params: {
-        orderId,
-        orderState
-      },
-      headers: {
-        'Content-Type': 'application/json',
-        'token': getToken(),
-      },
-    });
+const changeA = () => {
+  dialogVisible.value = true;
+};
 
-    return response.data;
-  } catch (error) {
-    console.error('Error updating order:', error);
-    throw error;
+const handleClose = (done: () => void) => {
+done();
+}
+
+onMounted(async () => {
+  await fetchAndFillOrdersData();
+  await fetchAddresses();
+  if (deliveryAddressArr.value.length > 0) {
+    selectedAddress.value = deliveryAddressArr.value[0];
   }
-};
-const changeStatus = (orderState: number) => {
-  orderState = orderState === 0 ? 1 : 0;
-  return orderState;
-};
-const handlePayment = async (orderId: number, orderState: number) => {
-  try {
-    const result = await updateOrder(orderId, changeStatus(orderState));
-    console.log('Order pay successfully:', result);
-    // 在成功创建订单后跳转到订单页面
-    await router.push('/order-list');
-  } catch (error) {
-    console.error('Failed to create order:', error);
-    // 可以添加错误处理逻辑
-  }
-};
-
-onMounted(fetchAndFillOrdersData);
+});
 
 </script>
 
@@ -179,17 +205,33 @@ onMounted(fetchAndFillOrdersData);
     </header>
 
     <!--订单信息部分-->
-    <div class="w-full mt-24 bg-[#0097FFFF] box-border p-[2vw] text-white">
+    <div class="w-full mt-24 bg-[#0097FFFF] box-border p-[2vw] text-white" v-if="selectedAddress">
       <p class="text-2xl font-light">订单配送至：</p>
       <div class="w-full flex justify-between items-center font-bold select-none cursor-pointer my-1 mx-0">
-        <p class="w-[90%] text-4xl">云南大学明远楼</p>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <p class="w-[90%] text-4xl">{{selectedAddress.address}}</p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" @click="changeA">
           <path fill="currentColor"
                 d="M15.54 11.29L9.88 5.64a1 1 0 0 0-1.42 0a1 1 0 0 0 0 1.41l4.95 5L8.46 17a1 1 0 0 0 0 1.41a1 1 0 0 0 .71.3a1 1 0 0 0 .71-.3l5.66-5.65a1 1 0 0 0 0-1.47Z"/>
         </svg>
       </div>
-      <p class="text2xl">方先生 12345</p>
+      <p class="text2xl">{{selectedAddress.contactName}}{{formatSex(selectedAddress)}}  {{selectedAddress.contactTel}}</p>
     </div>
+
+    <el-dialog v-model="dialogVisible" title="选择一个地址" align-center width="80%" :before-close="handleClose" style="overflow: auto;">
+    <el-table :data="tableData" style="width: 100%">
+      <el-table-column label="姓名" prop="contactName" />
+      <el-table-column label="地址" prop="address" />
+      <el-table-column label="电话" prop="contactTel" />
+      <el-table-column label="性别" prop="contactSex" :formatter="formatSex"/>
+      <el-table-column align="right" fixed="right">
+        <template #default="scope">
+          <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
+          >选择</el-button
+          >
+        </template>
+      </el-table-column>
+    </el-table>
+    </el-dialog>
 
     <div class="w-full" v-for="order in orders" :key="order.orderId">
     <p class="box-border p-[3vw] text-3xl font-bold text-[#666666FF] border-solid border-b-[1px] border-b-[#DDDDDDFF]">
