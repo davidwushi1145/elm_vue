@@ -165,7 +165,7 @@ onMounted(fetchAndFillOrdersData);
             </svg>
           </p>
           <div class="flex">
-            <p class="">&#165;{{order.orderTotal}}</p>
+            <p class="">&#165;{{order.orderTotal + (order.businessVo?.deliveryPrice || 0)}}</p>
             <RouterLink class="block w-full h-full" :to="`/payment/${order.orderId}`">
               <button class="bg-[#FF9900FF] text-white rounded-[3px] ml-4 select-none cursor-pointer">去支付
               </button>

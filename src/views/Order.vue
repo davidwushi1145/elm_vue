@@ -257,7 +257,7 @@ onMounted(async () => {
     <RouterLink class="block w-full h-full" :to="`/payment/${orderId}`">
     <div class="w-full h-28 fixed left-0 bottom-0 flex">
       <div class="flex basis-2/3 bg-[#505051FF] text-white text-4xl font-bold select-none justify-center items-center">
-        &#165;{{order.orderTotal}}
+        &#165;{{order.orderTotal + (order.businessVo?.deliveryPrice || 0)}}
       </div>
       <div class="flex basis-1/3 bg-[#38CA73FF] text-white text-4xl font-bold select-none cursor-pointer justify-center items-center">去支付
       </div>
