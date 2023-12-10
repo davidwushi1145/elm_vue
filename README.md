@@ -1,4 +1,5 @@
 # elm_vue
+基于Vue3的饿了么前端页面。
 这是一个使用 Vue 3 构建的前端项目。([后端仓库](https://github.com/davidwushi1145/elm_SpringBoot))项目采用了 Vue Router 和 Element Plus，专注于提供一个现代化、响应式的用户界面。
 ## Recommended IDE Setup
 
