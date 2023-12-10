@@ -56,6 +56,11 @@ const router = createRouter({
       name: 'Address',
       component: () => import('../views/UserAddress.vue'),
     },
+    {
+      path: '/bussiness-type/:typeId',
+      name: 'BusinessType',
+      component: () => import('../views/BusinessTypeList.vue'),
+    },
 
   ],
   scrollBehavior (to, from, savedPosition) {

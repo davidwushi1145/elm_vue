@@ -59,44 +59,64 @@ onMounted(async () => {
     <!--种类列表部分-->
     <div class="food-type">
       <div class="food-type-item">
+        <RouterLink :to="`/bussiness-type/1`">
         <img alt="1" src="../assets/img/dcfl01.png">
         <p>美食</p>
+        </RouterLink>
       </div>
       <div class="food-type-item">
+        <RouterLink :to="`/bussiness-type/2`">
         <img alt="1" src="../assets/img/dcfl02.png">
         <p>早餐</p>
+        </RouterLink>
       </div>
       <div class="food-type-item">
+        <RouterLink :to="`/bussiness-type/3`">
         <img alt="1" src="../assets/img/dcfl03.png">
         <p>跑腿代购</p>
+        </RouterLink>
       </div>
       <div class="food-type-item">
+        <RouterLink :to="`/bussiness-type/4`">
         <img alt="1" src="../assets/img/dcfl04.png">
         <p>汉堡披萨</p>
+        </RouterLink>
       </div>
       <div class="food-type-item">
+        <RouterLink :to="`/bussiness-type/5`">
         <img alt="1" src="../assets/img/dcfl05.png">
         <p>甜品饮品</p>
+        </RouterLink>
       </div>
       <div class="food-type-item">
+        <RouterLink :to="`/bussiness-type/6`">
         <img alt="1" src="../assets/img/dcfl06.png">
         <p>速食简餐</p>
+        </RouterLink>
       </div>
       <div class="food-type-item">
+        <RouterLink :to="`/bussiness-type/7`">
         <img alt="1" src="../assets/img/dcfl07.png">
         <p>地方小吃</p>
+        </RouterLink>
       </div>
       <div class="food-type-item">
+        <RouterLink :to="`/bussiness-type/8`">
         <img alt="1" src="../assets/img/dcfl08.png">
         <p>米粉面馆</p>
+        </RouterLink>
       </div>
       <div class="food-type-item">
+        <RouterLink :to="`/bussiness-type/9`">
         <img alt="1" src="../assets/img/dcfl09.png">
         <p>包子粥铺</p>
+        </RouterLink>
       </div>
       <div class="food-type-item">
+        <RouterLink :to="`/bussiness-type/10`">
         <img alt="1" src="../assets/img/dcfl10.png">
         <p>炸鸡炸串</p>
+        </RouterLink>
       </div>
     </div>
 
