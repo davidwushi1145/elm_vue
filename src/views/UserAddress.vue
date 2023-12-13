@@ -193,7 +193,7 @@ onMounted(fetchAddresses);
           <el-input v-model="addressForm.contactTel"></el-input>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer flex justify-center">
     <el-button @click="dialogVisible = false">Cancel</el-button>
     <el-button type="primary" @click="submitAddressForm">OK</el-button>
   </span>
@@ -224,6 +224,11 @@ onMounted(fetchAddresses);
     </div>
 
   </div>
+  <div>&nbsp;</div>
+  <div>&nbsp;</div>
+  <div>&nbsp;</div>
+  <div>&nbsp;</div>
+  <div>&nbsp;</div>
 </template>
 
 <style scoped>
