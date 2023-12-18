@@ -22,7 +22,7 @@ const register = async () => {
       userName: userName.value,
       userSex: userSex.value
     });
-    console.log('注册成功:', response);
+    // console.log('注册成功:', response);
     alert('注册成功');
     await router.push('/login');
   } catch (error) {

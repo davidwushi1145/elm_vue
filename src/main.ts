@@ -20,7 +20,7 @@ router.beforeEach((to, from, next) => {
         next('/login');
         alert("请登录");
     } else {
-        console.log("你的token是" + token);
+        // console.log("你的token是" + token);
         next();
     }
 });

@@ -93,14 +93,16 @@ const fetchOrderDetails = async (orderId: number) => {
 };
 const orders = ref<OrdersVo[]>([]);
 
+// ...
+
+// Remove fetchOrderDetails from fetchAndFillOrdersData
 const fetchAndFillOrdersData = async () => {
   try {
     const ordersResponse = await listOrdersByUserId();
     if (ordersResponse.code === 200 && Array.isArray(ordersResponse.data)) {
-      // 遍历所有订单，并填充 businessVo 和订单详细信息
+      // 遍历所有订单，并填充 businessVo
       orders.value = await Promise.all(ordersResponse.data.map(async (order: OrdersVo) => {
         let businessInfo = order.businessVo;
-        let orderDetailsInfo = [];
 
         // 如果 businessVo 为 null，则通过 businessId 获取 businessVo
         if (businessInfo === null && order.businessId) {
@@ -110,14 +112,7 @@ const fetchAndFillOrdersData = async () => {
           }
         }
 
-        // 获取订单详细信息
-        const orderDetailsResponse = await fetchOrderDetails(order.orderId);
-        if (orderDetailsResponse.code === 200 && orderDetailsResponse.data) {
-          orderDetailsInfo = orderDetailsResponse.data;
-        }
-        // console.log('orders:', orders);
-        return {...order, businessVo: businessInfo, list: orderDetailsInfo, show: false};
-
+        return {...order, businessVo: businessInfo, list: [], show: false};
       }));
     }
   } catch (error) {
@@ -125,17 +120,25 @@ const fetchAndFillOrdersData = async () => {
   }
 };
 
-const toggleOrderDetails = (orderId: number) => {
-  // console.log('toggleOrderDetails:', orderId);
-
-  orders.value = orders.value.map(order => {
-    if (order.orderId === orderId) {
-      // console.log('order:', order);
-      return {...order, show: !order.show};
+const toggleOrderDetails = async (orderId: number) => {
+  // Find the order
+  const order = orders.value.find(order => order.orderId === orderId);
+  if (order) {
+    if (order.show) {
+      // If the order details are already shown, just hide them
+      order.show = false;
+    } else {
+      // If the order details are not shown, fetch them and then show them
+      const orderDetailsResponse = await fetchOrderDetails(order.orderId);
+      if (orderDetailsResponse.code === 200 && orderDetailsResponse.data) {
+        order.list = orderDetailsResponse.data;
+      }
+      order.show = true;
     }
-    return order;
-  });
+  }
 };
+
+// ...
 
 
 onMounted(fetchAndFillOrdersData);

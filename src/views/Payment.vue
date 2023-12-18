@@ -175,7 +175,7 @@ const changeStatus = (orderState: number) => {
 const handlePayment = async (orderId: number, orderState: number) => {
   try {
     const result = await updateOrder(orderId, changeStatus(orderState));
-    console.log('Order pay successfully:', result);
+    // console.log('Order pay successfully:', result);
     // 在成功创建订单后跳转到订单页面
     await router.push('/order-list');
   } catch (error) {

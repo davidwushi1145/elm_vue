@@ -208,7 +208,7 @@ const handleCreateOrder = async (businessId: number, daId: number, orderTotal: n
   try {
     // console.log(businessId,daId,orderTotal);
     const result = await createOrder(businessId, daId, orderTotal);
-    console.log('Order created successfully:', result);
+    // console.log('Order created successfully:', result);
     // 在成功创建订单后跳转到订单页面
     await router.push({name: 'Order', params: {orderId: result.data}});
   } catch (error) {
