@@ -40,6 +40,7 @@ elm_vue
 - Element Plus
 - Axios
 - Tailwind CSS
+- crypto-js
 
 ## 安装与运行
 
