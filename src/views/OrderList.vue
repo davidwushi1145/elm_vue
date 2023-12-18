@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import {getToken} from "@/authService";
@@ -47,7 +47,7 @@ interface OrdersVo {
   show: boolean;
 }
 
-const listOrdersByUserId = async ()=> {
+const listOrdersByUserId = async () => {
   try {
     const response = await axios.get('/api/orders/lists', {
       headers: {
@@ -61,7 +61,7 @@ const listOrdersByUserId = async ()=> {
     throw error;
   }
 };
-const getBusinessById = async (businessId: number)=> {
+const getBusinessById = async (businessId: number) => {
   try {
     const response = await axios.get(`/api/business/businesses/${businessId}`, {
       headers: {
@@ -76,10 +76,10 @@ const getBusinessById = async (businessId: number)=> {
     throw error;
   }
 };
-const fetchOrderDetails = async (orderId: number)=> {
+const fetchOrderDetails = async (orderId: number) => {
   try {
     const response = await axios.get('/api/orders/listsDetailet', {
-      params: { orderId },
+      params: {orderId},
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'token': getToken(),
@@ -116,7 +116,7 @@ const fetchAndFillOrdersData = async () => {
           orderDetailsInfo = orderDetailsResponse.data;
         }
         // console.log('orders:', orders);
-        return { ...order, businessVo: businessInfo, list: orderDetailsInfo, show: false};
+        return {...order, businessVo: businessInfo, list: orderDetailsInfo, show: false};
 
       }));
     }
@@ -125,13 +125,13 @@ const fetchAndFillOrdersData = async () => {
   }
 };
 
-const toggleOrderDetails = (orderId:number) => {
+const toggleOrderDetails = (orderId: number) => {
   // console.log('toggleOrderDetails:', orderId);
 
   orders.value = orders.value.map(order => {
     if (order.orderId === orderId) {
       // console.log('order:', order);
-      return { ...order, show: !order.show };
+      return {...order, show: !order.show};
     }
     return order;
   });
@@ -148,38 +148,42 @@ onMounted(fetchAndFillOrdersData);
   <div class="w-full h-full">
 
     <!--header部分-->
-    <header class="w-full h-24 bg-[#0097FFFF] text-white text-4xl fixed left-0 top-0 z-50 flex justify-center items-center">
+    <header
+        class="w-full h-24 bg-[#0097FFFF] text-white text-4xl fixed left-0 top-0 z-50 flex justify-center items-center">
       <p class="">我的订单</p>
     </header>
 
     <!--订单列表部分-->
-    <h3 class=" mt-24 box-border p-[4vw] text-3xl font-light text-[#999999FF]" >未支付订单信息：</h3>
+    <h3 class=" mt-24 box-border p-[4vw] text-3xl font-light text-[#999999FF]">未支付订单信息：</h3>
     <ul class="w-full">
-      <li class="w-full text-3xl" v-for="order in orders" :key="order.orderId">
-        <div class="box-border py-[2vw] px-[4vw] text-[#666666FF] flex justify-between items-center" v-if="order.orderState===0">
+      <li v-for="order in orders" :key="order.orderId" class="w-full text-3xl">
+        <div v-if="order.orderState===0"
+             class="box-border py-[2vw] px-[4vw] text-[#666666FF] flex justify-between items-center">
           <p class="flex flex-row justify-between items-center">
             {{ order.businessVo ? order.businessVo.businessName : '' }}
-            <svg class="fa-caret-down" @click="toggleOrderDetails(order.orderId)" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                 viewBox="0 0 32 32">
-              <path fill="currentColor" d="m24 12l-8 10l-8-10z"/>
+            <svg class="fa-caret-down" height="20" viewBox="0 0 32 32"
+                 width="20" xmlns="http://www.w3.org/2000/svg"
+                 @click="toggleOrderDetails(order.orderId)">
+              <path d="m24 12l-8 10l-8-10z" fill="currentColor"/>
             </svg>
           </p>
           <div class="flex">
-            <p class="">&#165;{{order.orderTotal + (order.businessVo?.deliveryPrice || 0)}}</p>
-            <RouterLink class="block w-full h-full" :to="`/payment/${order.orderId}`">
+            <p class="">&#165;{{ order.orderTotal + (order.businessVo?.deliveryPrice || 0) }}</p>
+            <RouterLink :to="`/payment/${order.orderId}`" class="block w-full h-full">
               <button class="bg-[#FF9900FF] text-white rounded-[3px] ml-4 select-none cursor-pointer">去支付
               </button>
             </RouterLink>
           </div>
         </div>
-        <ul class="w-full order-detailet" v-show="order.show" v-if="order.orderState===0">
-          <li  v-for="detail in order.list" :key="detail.odId" class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
-            <p class="">{{detail.food.foodName}}*{{detail.quantity}}</p>
-            <p class="">&#165;{{detail.food.foodPrice * detail.quantity }}</p>
+        <ul v-if="order.orderState===0" v-show="order.show" class="w-full order-detailet">
+          <li v-for="detail in order.list" :key="detail.odId"
+              class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
+            <p class="">{{ detail.food.foodName }}*{{ detail.quantity }}</p>
+            <p class="">&#165;{{ detail.food.foodPrice * detail.quantity }}</p>
           </li>
           <li class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
             <p class="">配送费</p>
-            <p class="">&#165;{{ order.businessVo ? order.businessVo.deliveryPrice : ''}}</p>
+            <p class="">&#165;{{ order.businessVo ? order.businessVo.deliveryPrice : '' }}</p>
           </li>
         </ul>
       </li>
@@ -188,31 +192,34 @@ onMounted(fetchAndFillOrdersData);
 
     <h3 class=" mt-24 box-border p-[4vw] text-3xl font-light text-[#999999FF]">已支付订单信息：</h3>
     <ul class="w-full">
-      <li class="w-full text-3xl" v-for="order in orders" :key="order.orderId">
-        <div class="box-border py-[2vw] px-[4vw] text-[#666666FF] flex justify-between items-center" v-if="order.orderState===1">
+      <li v-for="order in orders" :key="order.orderId" class="w-full text-3xl">
+        <div v-if="order.orderState===1"
+             class="box-border py-[2vw] px-[4vw] text-[#666666FF] flex justify-between items-center">
           <p class="flex flex-row justify-between items-center">
             {{ order.businessVo ? order.businessVo.businessName : '' }}
-            <svg class="fa-caret-down" @click="toggleOrderDetails(order.orderId)" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                 viewBox="0 0 32 32">
-              <path fill="currentColor" d="m24 12l-8 10l-8-10z"/>
+            <svg class="fa-caret-down" height="20" viewBox="0 0 32 32"
+                 width="20" xmlns="http://www.w3.org/2000/svg"
+                 @click="toggleOrderDetails(order.orderId)">
+              <path d="m24 12l-8 10l-8-10z" fill="currentColor"/>
             </svg>
           </p>
           <div class="flex">
-            <p class="">&#165;{{order.orderTotal + (order.businessVo?.deliveryPrice || 0)}}</p>
+            <p class="">&#165;{{ order.orderTotal + (order.businessVo?.deliveryPrice || 0) }}</p>
             <RouterLink class="block w-full h-full" to="/">
               <button class="bg-green-500 text-white rounded-[3px] ml-4 select-none cursor-pointer">去评价
               </button>
             </RouterLink>
           </div>
         </div>
-        <ul class="w-full order-detailet" v-show="order.show" v-if="order.orderState===1">
-          <li  v-for="detail in order.list" :key="detail.odId" class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
-            <p class="">{{detail.food.foodName}} *{{detail.quantity}}</p>
-            <p class="">&#165;{{detail.food.foodPrice * detail.quantity }}</p>
+        <ul v-if="order.orderState===1" v-show="order.show" class="w-full order-detailet">
+          <li v-for="detail in order.list" :key="detail.odId"
+              class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
+            <p class="">{{ detail.food.foodName }} *{{ detail.quantity }}</p>
+            <p class="">&#165;{{ detail.food.foodPrice * detail.quantity }}</p>
           </li>
           <li class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
             <p class="">配送费</p>
-            <p class="">&#165;{{ order.businessVo ? order.businessVo.deliveryPrice : ''}}</p>
+            <p class="">&#165;{{ order.businessVo ? order.businessVo.deliveryPrice : '' }}</p>
           </li>
         </ul>
       </li>

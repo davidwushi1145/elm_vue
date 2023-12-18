@@ -50,7 +50,8 @@ onMounted(async () => {
       <div id="fixedBox" class="search-fixed-top">
         <div class="search-panel">
           <i class="fa fa-search" style="flex: 0 0 15px;padding-left: 10px"></i>
-          <input placeholder="请输入你要查询的商品" style="flex: 6;outline: none;border: none;color: #9f9f9f ;font-size: 4vw"
+          <input placeholder="请输入你要查询的商品"
+                 style="flex: 6;outline: none;border: none;color: #9f9f9f ;font-size: 4vw"
                  type="search">
           <div class="search-button" style="flex: 0 0 16vw">搜索</div>
         </div>
@@ -60,62 +61,62 @@ onMounted(async () => {
     <div class="food-type">
       <div class="food-type-item">
         <RouterLink :to="`/bussiness-type/1`">
-        <img alt="1" src="../assets/img/dcfl01.png">
-        <p>美食</p>
+          <img alt="1" src="../assets/img/dcfl01.png">
+          <p>美食</p>
         </RouterLink>
       </div>
       <div class="food-type-item">
         <RouterLink :to="`/bussiness-type/2`">
-        <img alt="1" src="../assets/img/dcfl02.png">
-        <p>早餐</p>
+          <img alt="1" src="../assets/img/dcfl02.png">
+          <p>早餐</p>
         </RouterLink>
       </div>
       <div class="food-type-item">
         <RouterLink :to="`/bussiness-type/3`">
-        <img alt="1" src="../assets/img/dcfl03.png">
-        <p>跑腿代购</p>
+          <img alt="1" src="../assets/img/dcfl03.png">
+          <p>跑腿代购</p>
         </RouterLink>
       </div>
       <div class="food-type-item">
         <RouterLink :to="`/bussiness-type/4`">
-        <img alt="1" src="../assets/img/dcfl04.png">
-        <p>汉堡披萨</p>
+          <img alt="1" src="../assets/img/dcfl04.png">
+          <p>汉堡披萨</p>
         </RouterLink>
       </div>
       <div class="food-type-item">
         <RouterLink :to="`/bussiness-type/5`">
-        <img alt="1" src="../assets/img/dcfl05.png">
-        <p>甜品饮品</p>
+          <img alt="1" src="../assets/img/dcfl05.png">
+          <p>甜品饮品</p>
         </RouterLink>
       </div>
       <div class="food-type-item">
         <RouterLink :to="`/bussiness-type/6`">
-        <img alt="1" src="../assets/img/dcfl06.png">
-        <p>速食简餐</p>
+          <img alt="1" src="../assets/img/dcfl06.png">
+          <p>速食简餐</p>
         </RouterLink>
       </div>
       <div class="food-type-item">
         <RouterLink :to="`/bussiness-type/7`">
-        <img alt="1" src="../assets/img/dcfl07.png">
-        <p>地方小吃</p>
+          <img alt="1" src="../assets/img/dcfl07.png">
+          <p>地方小吃</p>
         </RouterLink>
       </div>
       <div class="food-type-item">
         <RouterLink :to="`/bussiness-type/8`">
-        <img alt="1" src="../assets/img/dcfl08.png">
-        <p>米粉面馆</p>
+          <img alt="1" src="../assets/img/dcfl08.png">
+          <p>米粉面馆</p>
         </RouterLink>
       </div>
       <div class="food-type-item">
         <RouterLink :to="`/bussiness-type/9`">
-        <img alt="1" src="../assets/img/dcfl09.png">
-        <p>包子粥铺</p>
+          <img alt="1" src="../assets/img/dcfl09.png">
+          <p>包子粥铺</p>
         </RouterLink>
       </div>
       <div class="food-type-item">
         <RouterLink :to="`/bussiness-type/10`">
-        <img alt="1" src="../assets/img/dcfl10.png">
-        <p>炸鸡炸串</p>
+          <img alt="1" src="../assets/img/dcfl10.png">
+          <p>炸鸡炸串</p>
         </RouterLink>
       </div>
     </div>
@@ -150,56 +151,56 @@ onMounted(async () => {
     </div>
     <!--商家列表-->
     <div class="business-list">
-      <RouterLink class="block w-full" :to="`/business-info/${business.businessId}`" v-for="business in businesses" :key="business.businessId" >
-      <div class="business">
-        <img :alt="business.businessName" :src="business.businessImg"/>
-        <div class="business-info">
-          <div class="business-name">
-            <h3>{{ business.businessName }}</h3>
-            <i class="fa fa-mobile-phone" style="font-size: 4vw"></i>
-          </div>
-          <div class="business-info-start">
-            <!-- 星级和月售等信息 -->
-            <!-- ... -->
-            <div class="business-info-left">
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
-              <p>
-                4.9&nbsp;月售{{ business.orderQuantity }}单
-              </p>
+      <RouterLink v-for="business in businesses" :key="business.businessId" :to="`/business-info/${business.businessId}`"
+                  class="block w-full">
+        <div class="business">
+          <img :alt="business.businessName" :src="business.businessImg"/>
+          <div class="business-info">
+            <div class="business-name">
+              <h3>{{ business.businessName }}</h3>
+              <i class="fa fa-mobile-phone" style="font-size: 4vw"></i>
             </div>
-            <div class="business-info-right" style="line-height: 1">
-              蜂鸟专送
+            <div class="business-info-start">
+              <!-- 星级和月售等信息 -->
+              <div class="business-info-left">
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <p>
+                  4.9&nbsp;月售{{ business.orderQuantity }}单
+                </p>
+              </div>
+              <div class="business-info-right" style="line-height: 1">
+                蜂鸟专送
+              </div>
             </div>
-          </div>
-          <div class="business-delivery">
-            <p>{{ business.starPrice }}元起送</p>
-            <p>1km</p>
-          </div>
-          <div class="business-info-detail">
-            <div>{{ business.businessExplain }}</div>
-          </div>
-          <div class="business-info-promotion">
-            <div class="business-info-promotion-left">
-              <div class="business-info-promotion-left-icon">新</div>
-              <p>饿了么新用户首单立减9元</p>
+            <div class="business-delivery">
+              <p>{{ business.starPrice }}元起送</p>
+              <p>1km</p>
             </div>
-            <div class="business-info-promotion-right">
-              <p>2个活动&nbsp;&nbsp;</p>
-              <i class="fa fa-caret-down"></i>
+            <div class="business-info-detail">
+              <div>{{ business.businessExplain }}</div>
             </div>
-          </div>
-          <div class="business-info-promotion">
-            <div class="business-info-promotion-left">
-              <div class="business-info-promotion-left-icon" style="background-color: orangered">特</div>
-              <p>特价商品5元起</p>
+            <div class="business-info-promotion">
+              <div class="business-info-promotion-left">
+                <div class="business-info-promotion-left-icon">新</div>
+                <p>饿了么新用户首单立减9元</p>
+              </div>
+              <div class="business-info-promotion-right">
+                <p>2个活动&nbsp;&nbsp;</p>
+                <i class="fa fa-caret-down"></i>
+              </div>
+            </div>
+            <div class="business-info-promotion">
+              <div class="business-info-promotion-left">
+                <div class="business-info-promotion-left-icon" style="background-color: orangered">特</div>
+                <p>特价商品5元起</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
       </RouterLink>
     </div>
 

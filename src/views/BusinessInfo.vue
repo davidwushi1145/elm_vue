@@ -96,7 +96,7 @@ const fetchCart = async () => {
       });
       cartItems.value = cartArr;
       // console.log('cartArr:', cartArr);
-      console.log('cartItems:', cartItems);
+      // console.log('cartItems:', cartItems);
     }
   } catch (error) {
     console.error('Error fetching cart:', error);
@@ -204,16 +204,15 @@ const createOrder = async (businessId: number, daId: number, orderTotal: number)
     throw error;
   }
 };
-const handleCreateOrder = async (businessId:number, daId:number, orderTotal:number) => {
+const handleCreateOrder = async (businessId: number, daId: number, orderTotal: number) => {
   try {
-    console.log(businessId,daId,orderTotal);
+    // console.log(businessId,daId,orderTotal);
     const result = await createOrder(businessId, daId, orderTotal);
     console.log('Order created successfully:', result);
     // 在成功创建订单后跳转到订单页面
-    router.push({ name: 'Order', params: { orderId: result.data} });
+    await router.push({name: 'Order', params: {orderId: result.data}});
   } catch (error) {
     console.error('Failed to create order:', error);
-    // 可以添加错误处理逻辑
   }
 };
 const increaseQuantity = async (foodId: number) => {
@@ -324,10 +323,11 @@ onMounted(async () => {
 
 
       <div class="basis-1/3">
-          <button @click="totalCartPrice > 0 && handleCreateOrder(Number(businessId), 1, totalCartPrice)"
-              class="w-full h-full bg-green-500 text-white text-4xl font-bold select-none cursor-pointer flex justify-center items-center">
-            去结算
-          </button>
+        <button
+            class="w-full h-full bg-green-500 text-white text-4xl font-bold select-none cursor-pointer flex justify-center items-center"
+            @click="totalCartPrice > 0 && handleCreateOrder(Number(businessId), 1, totalCartPrice)">
+          去结算
+        </button>
       </div>
     </div>
   </div>

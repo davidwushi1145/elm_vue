@@ -3,11 +3,11 @@ import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import {getToken} from "@/authService";
 import {ElMessage} from "element-plus";
-import {Upload } from '@element-plus/icons-vue'
+import {Upload} from '@element-plus/icons-vue'
 
 interface DeliveryAddress {
   contactName: string;
-  contactSex: number;
+  contactSex: number | null;
   contactTel: string;
   address: string;
   daId: number;
@@ -56,7 +56,7 @@ const newDeliveryAddress = async (deliveryAddress: DeliveryAddress) => {
   }
 };
 
-const removeDeliveryAddress = async (daId:number) => {
+const removeDeliveryAddress = async (daId: number) => {
   try {
     const response = await axios.delete(`/api/deliveryAddress/removed-DA`, {
       params: {
@@ -94,23 +94,9 @@ const updateDeliveryAddress = async (deliveryAddress: DeliveryAddress) => {
     console.error('Error making request:', error);
   }
 };
-const getDeliveryAddressById = async (daId: number) => {
-  try {
-    const response = await axios.get(`/api/deliveryAddress/${daId}`, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'token': getToken()
-      }
-    });
-
-    if (response.data.code === 200) {
-      return response.data.data; // This will be a DeliveryAddressVo object
-    } else {
-      console.error('Error fetching delivery address:', response.data.message);
-    }
-  } catch (error) {
-    console.error('Error making request:', error);
-  }
+const selectAddress = (address: DeliveryAddress) => {
+  selectedAddress.value = address;
+  addressForm.value = {...address};
 };
 const sexFilter = (sex: number) => {
   return sex === 0 ? '男' : '女';
@@ -120,7 +106,7 @@ const addressForm = ref({
   address: '',
   contactName: '',
   contactTel: '',
-  contactSex: ''
+  contactSex: null as number | null // change this to a number | null
 });
 const submitAddressForm = async () => {
   // 创建一个 DeliveryAddress 对象
@@ -129,7 +115,7 @@ const submitAddressForm = async () => {
     contactName: addressForm.value.contactName,
     contactTel: addressForm.value.contactTel,
     daId: selectedAddress.value?.daId || 0, // 如果有选中的地址，使用选中的地址的 daId，否则使用 0
-    contactSex: 0, // 这里需要填入联系人的性别
+    contactSex: addressForm.value.contactSex, // 这里需要填入联系人的性别
   };
 
   // 调用 editUserAddress 方法
@@ -148,6 +134,12 @@ const submitAddressForm = async () => {
   dialogVisible.value = false;
 };
 const openF = () => {
+  addressForm.value = {
+    address: '',
+    contactName: '',
+    contactTel: '',
+    contactSex: null
+  };
   dialogVisible.value = true;
 };
 const deliveryAddressArr = ref<DeliveryAddress[]>([]);
@@ -178,7 +170,7 @@ onMounted(fetchAddresses);
       <p>地址管理</p>
     </header>
 
-    <el-dialog v-model="dialogVisible" title="请输入你的新地址" align-center>
+    <el-dialog v-model="dialogVisible" align-center title="请输入你的新地址">
       <el-form :model="addressForm">
         <el-form-item label="地址">
           <el-input v-model="addressForm.address"></el-input>
@@ -187,7 +179,10 @@ onMounted(fetchAddresses);
           <el-input v-model="addressForm.contactName"></el-input>
         </el-form-item>
         <el-form-item label="性别">
-          <el-input v-model="addressForm.contactSex"></el-input>
+          <el-select v-model="addressForm.contactSex" placeholder=" ">
+            <el-option :value="0" label="男"></el-option>
+            <el-option :value="1" label="女"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="联系电话">
           <el-input v-model="addressForm.contactTel"></el-input>
@@ -200,26 +195,31 @@ onMounted(fetchAddresses);
     </el-dialog>
 
     <!-- 地址列表部分 -->
-    <div class="w-full flex-col h-30 flex box-border pt-[4vw] px-[3vw] pb-0 justify-center items-center" v-for="item in deliveryAddressArr">
-      <el-descriptions  border class="w-full mt-24" :column="2">
+    <div v-for="item in deliveryAddressArr"
+         class="w-full flex-col h-30 flex box-border pt-[4vw] px-[3vw] pb-0 justify-center items-center">
+      <el-descriptions :column="2" border class="w-full mt-24" @click="selectAddress(item)">
         <template #extra>
           <el-button type="primary" @click="openF">编辑地址</el-button>
           <el-button type="danger" @click="removeUserAddress(item.daId)">删除地址</el-button>
         </template>
-        <el-descriptions-item label="姓名">{{item.contactName}}</el-descriptions-item>
-        <el-descriptions-item label="联系电话">{{item.contactTel}}</el-descriptions-item>
+        <el-descriptions-item label="姓名">{{ item.contactName }}</el-descriptions-item>
+        <el-descriptions-item label="联系电话">{{ item.contactTel }}</el-descriptions-item>
         <el-descriptions-item label="性别">
-          <el-tag size="small">{{sexFilter(item.contactSex)}}</el-tag>
+          <el-tag size="small">{{ sexFilter(item.contactSex !== null ? item.contactSex : 0) }}</el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="地址"
-        >{{item.address}}</el-descriptions-item
+        >{{ item.address }}
+        </el-descriptions-item
         >
       </el-descriptions>
-  </div>
+    </div>
     <!-- 新增地址部分 -->
     <div class="flex mt-24 justify-center">
       <el-button type="primary" @click="openF">
-        添加新地址<el-icon class="el-icon--right"><Upload /></el-icon>
+        添加新地址
+        <el-icon class="el-icon--right">
+          <Upload/>
+        </el-icon>
       </el-button>
     </div>
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import {clearToken, getToken} from "@/authService";
 import router from "@/router";
@@ -26,7 +26,7 @@ const fetchUserInfo = async () => {
     const response = await axios.get('/api/user/info', {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'token':getToken()
+        'token': getToken()
       }
     });
     if (response.data.code === 200) {
@@ -47,7 +47,8 @@ onMounted(fetchUserInfo);
 <template>
   <div class="w-full h-full pt-24">
     <!--header部分-->
-    <header class="w-full h-24 bg-[#0097FFFF] text-white text-4xl fixed left-0 top-0 z-50 flex justify-center items-center">
+    <header
+        class="w-full h-24 bg-[#0097FFFF] text-white text-4xl fixed left-0 top-0 z-50 flex justify-center items-center">
       <p>我的信息</p>
     </header>
 
@@ -62,12 +63,16 @@ onMounted(fetchUserInfo);
       <p>加载用户信息中...</p>
     </div>
     <div class="w-full flex-col h-30 flex box-border pt-[4vw] px-[3vw] pb-0 justify-center items-center">
-      <router-link to="/address" class="w-full">
-      <el-button type="info" class="w-full h-20 text-3xl font-bold text-[#666666FF] bg-[#DDDDDDFF] rounded-[4px]">我的地址</el-button>
+      <router-link class="w-full" to="/address">
+        <el-button class="w-full h-20 text-3xl font-bold text-[#666666FF] bg-[#DDDDDDFF] rounded-[4px]" type="info">
+          我的地址
+        </el-button>
       </router-link>
     </div>
     <div class="w-full flex-col h-30 flex box-border pt-[4vw] px-[3vw] pb-0 justify-center items-center">
-      <el-button type="danger" class="w-full h-20 text-3xl font-bold text-[#666666FF] bg-[#FF0000] rounded-[4px]" @click=exit()>退出</el-button>
+      <el-button class="w-full h-20 text-3xl font-bold text-[#666666FF] bg-[#FF0000] rounded-[4px]" type="danger"
+                 @click=exit()>退出
+      </el-button>
     </div>
 
 
