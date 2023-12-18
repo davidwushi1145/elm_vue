@@ -219,6 +219,12 @@ onMounted(fetchAndFillOrdersData);
 
     </ul>
   </div>
+  <div>&nbsp</div>
+  <div>&nbsp</div>
+  <div>&nbsp</div>
+  <div>&nbsp</div>
+  <div>&nbsp</div>
+  <div>&nbsp</div>
   </body>
 </template>
 
