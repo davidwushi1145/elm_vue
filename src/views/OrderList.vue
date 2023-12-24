@@ -47,9 +47,14 @@ interface OrdersVo {
   show: boolean;
 }
 
-const listOrdersByUserId = async () => {
+let page = ref(1);
+const size = 10;
+let hasMore = ref(true);
+
+const listOrdersByUserId = async (page: number, size: number) => {
   try {
     const response = await axios.get('/api/orders/lists', {
+      params: { page, size },
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'token': getToken(),
@@ -96,15 +101,13 @@ const orders = ref<OrdersVo[]>([]);
 // ...
 
 // Remove fetchOrderDetails from fetchAndFillOrdersData
-const fetchAndFillOrdersData = async () => {
+const fetchAndFillOrdersData = async (append = false) => {
   try {
-    const ordersResponse = await listOrdersByUserId();
+    const ordersResponse = await listOrdersByUserId(page.value, size);
     if (ordersResponse.code === 200 && Array.isArray(ordersResponse.data)) {
-      // 遍历所有订单，并填充 businessVo
-      orders.value = await Promise.all(ordersResponse.data.map(async (order: OrdersVo) => {
+      const newOrders = await Promise.all(ordersResponse.data.map(async (order: OrdersVo) => {
         let businessInfo = order.businessVo;
 
-        // 如果 businessVo 为 null，则通过 businessId 获取 businessVo
         if (businessInfo === null && order.businessId) {
           const businessResponse = await getBusinessById(order.businessId);
           if (businessResponse.code === 200 && businessResponse.data) {
@@ -114,6 +117,15 @@ const fetchAndFillOrdersData = async () => {
 
         return {...order, businessVo: businessInfo, list: [], show: false};
       }));
+
+      if (append) {
+        orders.value.push(...newOrders);
+      } else {
+        orders.value = newOrders;
+      }
+
+      // Check if there might be more orders
+      hasMore.value = ordersResponse.data.length === size;
     }
   } catch (error) {
     console.error('Error fetching and filling orders data:', error);
@@ -141,7 +153,17 @@ const toggleOrderDetails = async (orderId: number) => {
 // ...
 
 
-onMounted(fetchAndFillOrdersData);
+onMounted(() => {
+  fetchAndFillOrdersData();
+
+  window.addEventListener('scroll', () => {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+      // User has scrolled to the bottom of the page
+      page.value += 1;
+      fetchAndFillOrdersData(true);
+    }
+  });
+});
 
 </script>
 
@@ -228,6 +250,12 @@ onMounted(fetchAndFillOrdersData);
       </li>
 
     </ul>
+  </div>
+  <div v-if="hasMore" class="w-full p-[4vw] text-3xl font-light text-[#999999FF] flex justify-between items-center">
+    <p class="text-gray-600 w-full">下拉展示更多订单</p>
+  </div>
+  <div v-if="!hasMore" class="w-full p-[4vw] text-3xl font-light text-[#999999FF] flex justify-between items-center">
+    <p class="text-gray-600 w-full">订单已全部加载</p>
   </div>
   <div>&nbsp</div>
   <div>&nbsp</div>
